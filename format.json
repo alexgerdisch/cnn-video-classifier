@@ -1,0 +1,28 @@
+{
+   "data":[
+    { 
+        "frame-number": 1,
+        "labels": {
+            "team": 5,
+            "enemy": 3
+        },  
+        "pixel-matrix": []
+    },
+    { 
+        "frame-number": 2,
+        "labels": {
+            "team": 5,
+            "enemy": 3
+        },  
+        "pixel-matrix": []
+    },
+    { 
+        "frame-number": 3,
+        "labels": {
+            "team": 5,
+            "enemy": 3
+        },  
+        "pixel-matrix": []
+    }
+   ]
+}

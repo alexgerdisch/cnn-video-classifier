@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Extract Frames</title>
+</head>
+<body>
+  <video id="video" src="./video/2023-05-02 11-02-30.mkv" crossorigin="anonymous" ></video>
+   <button id="play-pause">Play/Pause</button>
+  <canvas id="canvas" style="display: none;"></canvas>
+
+  
+  <form id="form">
+    <label for="team">Team:</label>
+    <input type="number" id="team" name="team" required>
+    <label for="enemy">Enemy:</label>
+    <input type="number" id="enemy" name="enemy" required>
+    <button type="submit">Submit</button>
+  </form>
+  <button id="download">Download JSON</button>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const playPauseButton = document.getElementById('play-pause');
+    const form = document.getElementById('form');
+    const downloadButton = document.getElementById('download');
+
+    let currentFrameData = null;
+    let output = { data: [] };
+
+    // Set the known fps value
+    const fps = 30;
+
+    video.addEventListener('loadedmetadata', () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+    });
+
+    playPauseButton.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+
+    video.addEventListener('pause', () => {
+      currentFrameData = extractCurrentFrame();
+      console.log('Current frame data:', currentFrameData);
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const team = form.elements.team.value;
+      const enemy = form.elements.enemy.value;
+      const frameNumber = Math.round(video.currentTime * fps);
+
+      if (currentFrameData) {
+        output.data.push({
+          "frame-number": frameNumber,
+          labels: {
+            team: parseInt(team),
+            enemy: parseInt(enemy)
+          },
+          "pixel-matrix": Array.from(currentFrameData.data)
+        });
+        console.log('JSON object updated:', output);
+      } else {
+        alert('Please pause the video to capture a frame first.');
+      }
+    });
+
+    downloadButton.addEventListener('click', () => {
+      if (output.data.length > 0) {
+        saveJSON(output, 'output.json');
+      } else {
+        alert('Please submit at least one frame with labels.');
+      }
+    });
+
+    function extractCurrentFrame() {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      return ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
+    function saveJSON(obj, filename) {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj));
+      const downloadAnchorNode = document.createElement('a');
+
+      downloadAnchorNode.setAttribute('href', dataStr);
+      downloadAnchorNode.setAttribute('download', filename);
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    }
+  </script>
+</body>
+</html>
