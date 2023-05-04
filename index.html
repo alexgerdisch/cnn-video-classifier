@@ -5,7 +5,7 @@
   <title>Extract Current Frame and Save JSON</title>
 </head>
 <body>
-  <video id="video" src="video/2023-05-02 11-02-30.mkv" crossorigin="anonymous"></video>
+  <video id="video" src="video/trainer1_express_squashed.mp4" crossorigin="anonymous"></video>
   <button id="play-pause">Play/Pause</button>
   <canvas id="canvas" style="display: none;"></canvas>
 
@@ -28,7 +28,6 @@
     const downloadButton = document.getElementById('download');
     const slider = document.getElementById('slider');
 
-    let currentFrameData = null;
     let output = { data: [] };
 
     const fps = 30;
@@ -37,38 +36,37 @@
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
 
+      // Set video dimensions to 40% of the original size
       video.width = video.videoWidth * 0.4;
-    video.height = video.videoHeight * 0.4;
+      video.height = video.videoHeight * 0.4;
 
       slider.max = video.duration;
     });
 
     playPauseButton.addEventListener('click', togglePlayPause);
 
-    video.addEventListener('pause', () => {
-      currentFrameData = extractCurrentFrame();
-      console.log('Current frame data:', currentFrameData);
-    });
-
     form.addEventListener('submit', (event) => {
       event.preventDefault();
+
+      const currentFrameData = extractCurrentFrame();
       const team = form.elements.team.value;
       const enemy = form.elements.enemy.value;
       const frameNumber = Math.round(video.currentTime * fps);
 
-      if (currentFrameData) {
-        output.data.push({
-          "frame-number": frameNumber,
-          labels: {
-            team: parseInt(team),
-            enemy: parseInt(enemy)
-          },
-          "pixel-matrix": Array.from(currentFrameData.data)
-        });
-        console.log('JSON object updated:', output);
-      } else {
-        alert('Please pause the video to capture a frame first.');
-      }
+      output.data.push({
+        "frame-number": frameNumber,
+        labels: {
+          team: parseInt(team),
+          enemy: parseInt(enemy)
+        },
+        "pixel-matrix": Array.from(currentFrameData.data)
+      });
+      console.log('JSON object updated:', output);
+
+      // Clear input fields and focus on the first input
+      form.elements.team.value = '';
+      form.elements.enemy.value = '';
+      form.elements.team.focus();
     });
 
     downloadButton.addEventListener('click', () => {
