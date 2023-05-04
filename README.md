@@ -1,5 +1,5 @@
 # Convolutional Neural Network Video Classifier
-## Streamlined workflow for generating training ready pixel matrices's . 
+## Streamlined workflow for generating training ready pixel matrices. 
 
 Upload your video, edit your labels as needed, quickly add labels frame by frame.
 
