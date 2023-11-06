@@ -1,4 +1,4 @@
-# Convolutional Neural Network Video Classifier
+# Pixel Matrix Generator and Classifier for use in Convolutional Neural Network training
 ## Streamlined workflow for generating training ready pixel matrices. 
 
 Upload your video, edit your labels as needed, quickly add labels frame by frame.
